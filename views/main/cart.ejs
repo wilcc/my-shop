@@ -136,7 +136,7 @@
                       $<%=foundCart.items[i].item.price%>
                     </td>
                     <td class="text-right">
-                      <form method="post" action="/remove">
+                      <form method="post" action="/api/cart/product/remove">
                         <input type="hidden" name="item" value="<%=foundCart.items[i]._id%>"/>
                         <input type="hidden" name="price" value="<%=foundCart.items[i].price%>"/>
                         <button type="submit" class="btn btn-sm btn-danger">

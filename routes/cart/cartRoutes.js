@@ -21,27 +21,37 @@ router.post('/:product_id', (req, res, next) => {
     .catch((err) => next(err));
 });
 
-// router.get('/', (req, res, next) => {
-//   Cart.findOne({ owner: req.user._id })
-//     .populate('items.item')
-//     .exec((err, foundCart) => {
-//       if (err) return next(err);
-//       return res.render('main/cart', {
-//         foundCart,
-//         messages: req.flash('remove')
-//       });
-//     });
-// });
-
 router.get('/', (req, res, next) => {
   Cart.findOne({ owner: req.user._id })
-    .then((cart) => {
-      console.log('thecart', cart);
-      return cart;
-    })
-    .then((cart) => {
-      console.log(cart.items.length);
+    .populate('items.item')
+    .exec((err, foundCart) => {
+      if (err) return next(err);
+      return res.render('main/cart', {
+        foundCart,
+        messages: req.flash('remove')
+      });
     });
 });
+router.post('/product/remove',(req,res,next)=>{
+  Cart.findOne({owner:req.user._id}).then((cart)=>{
+    cart.items.pull(String(req.body.item))
+    cart.total = (cart.total - parseFloat(req.body.price)).toFixed(2)
+
+    cart.save().then((cart)=>{
+      req.flash('remove','Successfully removed')
+      return res.redirect('/api/cart')
+    })
+  })
+})
+// router.get('/', (req, res, next) => {
+//   Cart.findOne({ owner: req.user._id })
+//     .then((cart) => {
+//       console.log('thecart', cart);
+//       return cart;
+//     })
+//     .then((cart) => {
+//       console.log(cart.items.length);
+//     });
+// });
 
 module.exports = router;
